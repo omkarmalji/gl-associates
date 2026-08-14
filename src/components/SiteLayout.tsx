@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ArrowUpRight, CaretDown, List, MagnifyingGlass, X } from "@phosphor-icons/react";
+import { ArrowUpRight, List, X } from "@phosphor-icons/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -8,11 +8,9 @@ import { Link, NavLink, useLocation, useOutlet } from "react-router-dom";
 gsap.registerPlugin(ScrollTrigger);
 
 const navItems = [
-  { label: "Architecture", href: "/projects/architecture", caret: true },
-  { label: "Interior", href: "/projects/interior", caret: true },
-  { label: "Projects", href: "/projects", caret: true },
+  { label: "Studio", href: "/studio" },
+  { label: "Projects", href: "/projects" },
   { label: "Journal", href: "/journal" },
-  { label: "Studio", href: "/studio", caret: true },
   { label: "Team", href: "/team" },
 ];
 
@@ -103,17 +101,16 @@ export function SiteLayout() {
       <div className="route-curtain" key={`curtain-${location.pathname}`} aria-hidden="true" />
       <header className={`site-nav ${location.pathname === "/" ? "site-nav--overlay" : ""}`}>
         <Link className="wordmark" to="/" aria-label="Gayatri Lokesh Architects home">
-          <span>GAYATRI LOKESH ARCHITECTS</span>
+          <span>GAYATRI LOKESH</span><span>ARCHITECTS LLP</span>
         </Link>
         <nav className="desktop-nav" aria-label="Primary navigation">
-          {navItems.map(({ label, href, caret }) => (
+          {navItems.map(({ label, href }) => (
             <NavLink key={href} to={href} className={({ isActive }) => isActive ? "is-active" : ""}>
-              <span>{label}</span>{caret && <CaretDown size={11} weight="bold" aria-hidden="true" />}
+              {label}
             </NavLink>
           ))}
         </nav>
-        <Link className="nav-search" to="/projects" aria-label="Browse projects"><MagnifyingGlass size={18} /></Link>
-        <NavLink className="contact-pill" to="/contact">Contact Us</NavLink>
+        <NavLink className="contact-pill" to="/contact">Contact</NavLink>
         <button className="menu-button" type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu"><List size={24} /></button>
       </header>
 
