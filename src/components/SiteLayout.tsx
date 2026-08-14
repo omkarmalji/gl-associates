@@ -101,7 +101,8 @@ export function SiteLayout() {
       <div className="route-curtain" key={`curtain-${location.pathname}`} aria-hidden="true" />
       <header className={`site-nav ${location.pathname === "/" ? "site-nav--overlay" : ""}`}>
         <Link className="wordmark" to="/" aria-label="Gayatri Lokesh Architects home">
-          <span>GAYATRI LOKESH</span><span>ARCHITECTS LLP</span>
+          <img className="wordmark-logo" src="images/gl-associates-logo-transparent.png" alt="" />
+          <span className="wordmark-name">Gayatri Lokesh<br />Architects LLP</span>
         </Link>
         <nav className="desktop-nav" aria-label="Primary navigation">
           {navItems.map(({ label, href }) => (
@@ -115,6 +116,10 @@ export function SiteLayout() {
       </header>
 
       <div className={`mobile-menu ${menuOpen ? "is-open" : ""}`} aria-hidden={!menuOpen}>
+        <Link className="mobile-menu__brand" to="/" aria-label="Gayatri Lokesh Architects home">
+          <img src="images/gl-associates-logo-transparent.png" alt="" />
+          <span>Gayatri Lokesh<br />Architects LLP</span>
+        </Link>
         <button type="button" onClick={() => setMenuOpen(false)} aria-label="Close menu"><X size={28} /></button>
         {navItems.map(({ label, href }) => <NavLink key={href} to={href}>{label}</NavLink>)}
         <NavLink to="/contact">Contact</NavLink>
@@ -137,7 +142,10 @@ function Footer() {
         <div><span>Project inquiries</span><a href="mailto:projects@gl-associates.net">projects@gl-associates.net</a><span className="detail-line">Mumbai, Pune</span></div>
         <div><span>Phone</span><a href="tel:+917507353159">+91 75073 53159</a><span className="detail-line">Narayan Peth, Pune 411030</span></div>
       </div>
-      <div className="footer__wordmark">GAYATRI LOKESH</div>
+      <div className="footer__brand">
+        <img className="footer__logo" src="images/gl-associates-logo-transparent.png" alt="Gayatri Lokesh Architects logo" loading="lazy" />
+        <div className="footer__wordmark"><span>GAYATRI LOKESH</span> <span>ARCHITECTS</span></div>
+      </div>
       <Link className="footer__gallery" to="/projects" aria-label="Explore projects">
         <img src="images/spirit-front.jpg" alt="Spirit of the Place exterior" loading="lazy" />
         <img src="images/liberation-courtyard.jpg" alt="Liberation courtyard" loading="lazy" />
