@@ -5,7 +5,7 @@ import { ProjectCard } from "../components/ProjectCard";
 import { practiceCopy, projects } from "../data";
 
 export function HomePage() {
-  const heroProjects = [projects[1], projects[0], projects[2], projects[3]];
+  const heroProjects = [projects[1], projects[0], projects[2]];
   const [heroIndex, setHeroIndex] = useState(0);
   const heroProject = heroProjects[heroIndex];
   const titleWords = heroProject.title.split(" ");
@@ -71,7 +71,10 @@ export function HomePage() {
         <div className="services-stage">
           <Link to="/projects/architecture" className="service-line"><span>Architecture</span></Link>
           <Link to="/projects/interior" className="service-line service-line--featured" aria-label="Explore interior projects">
-            <span className="service-line__backdrop display-italic" aria-hidden="true">Interior / Interior / Interior</span>
+            <span className="service-line__marquee display-italic" aria-hidden="true">
+              <span>Interior / Interior / Interior /</span>
+              <span>Interior / Interior / Interior /</span>
+            </span>
             <span className="service-line__media">
               <img src="images/spirit-garden.jpg" alt="Spirit of the Place garden elevation" loading="lazy" />
               <span className="service-line__arrow"><ArrowUpRight size={20} /></span>
