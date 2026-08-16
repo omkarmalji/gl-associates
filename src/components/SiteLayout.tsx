@@ -16,24 +16,26 @@ const navItems = [
 
 export function SiteLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [heroVisible, setHeroVisible] = useState(true);
   const location = useLocation();
   const outlet = useOutlet();
   const pageRef = useRef<HTMLDivElement>(null);
   const lenisRef = useRef<Lenis | null>(null);
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     const previousRestoration = window.history.scrollRestoration;
     window.history.scrollRestoration = "manual";
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return () => { window.history.scrollRestoration = previousRestoration; };
-    const lenis = new Lenis({ duration: 1.05, smoothWheel: true, wheelMultiplier: 0.9 });
+    const lenis = new Lenis({ duration: 1, smoothWheel: true, wheelMultiplier: 0.9 });
     lenisRef.current = lenis;
     let frame = 0;
-    const raf = (time: number) => {
+    const tick = (time: number) => {
       lenis.raf(time);
-      frame = requestAnimationFrame(raf);
+      frame = requestAnimationFrame(tick);
     };
-    frame = requestAnimationFrame(raf);
+    frame = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(frame);
       lenis.destroy();
@@ -44,14 +46,36 @@ export function SiteLayout() {
 
   useEffect(() => {
     setMenuOpen(false);
-  }, [location.pathname]);
+    setHeroVisible(isHome);
+  }, [isHome, location.pathname]);
+
+  useEffect(() => {
+    if (!isHome) return;
+    const hero = document.querySelector(".home-hero");
+    if (!hero) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeroVisible(entry.isIntersecting),
+      { threshold: 0.08 },
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [isHome, location.pathname]);
 
   useLayoutEffect(() => {
     ScrollTrigger.clearScrollMemory("manual");
-    lenisRef.current?.scrollTo(0, { immediate: true, force: true });
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+    const resetScroll = () => {
+      lenisRef.current?.scrollTo(0, { immediate: true, force: true });
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    resetScroll();
+    const frame = requestAnimationFrame(resetScroll);
+    const timeout = window.setTimeout(resetScroll, 80);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.clearTimeout(timeout);
+    };
   }, [location.pathname]);
 
   useEffect(() => {
@@ -67,27 +91,29 @@ export function SiteLayout() {
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
         gsap.from(element, {
           opacity: 0,
-          y: 28,
-          duration: 0.68,
-          ease: "power2.out",
+          y: 24,
+          duration: 0.72,
+          ease: "power3.out",
           scrollTrigger: { trigger: element, start: "top 88%", once: true },
+        });
+      });
+      gsap.utils.toArray<HTMLElement>("[data-image-reveal]").forEach((frameElement) => {
+        const image = frameElement.querySelector("img");
+        if (!image) return;
+        gsap.fromTo(image, { scale: 1.08 }, {
+          scale: 1,
+          duration: 1.15,
+          ease: "power3.out",
+          scrollTrigger: { trigger: frameElement, start: "top 86%", once: true },
         });
       });
       gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((frameElement) => {
         const image = frameElement.querySelector("img");
         if (!image) return;
-        gsap.fromTo(image, { yPercent: -5, scale: 1.06 }, {
-          yPercent: 5,
+        gsap.fromTo(image, { yPercent: -3 }, {
+          yPercent: 3,
           ease: "none",
           scrollTrigger: { trigger: frameElement, start: "top bottom", end: "bottom top", scrub: 0.8 },
-        });
-      });
-      gsap.utils.toArray<HTMLElement>("[data-line-reveal]").forEach((element) => {
-        gsap.from(element, {
-          yPercent: 115,
-          duration: 0.85,
-          ease: "power3.out",
-          stagger: 0.08,
         });
       });
       requestAnimationFrame(() => ScrollTrigger.refresh());
@@ -95,11 +121,13 @@ export function SiteLayout() {
     return () => context.revert();
   }, [location.pathname]);
 
+  const overlayNav = isHome && heroVisible;
+
   return (
     <div className="site-shell">
       <a className="skip-link" href="#main-content">Skip to content</a>
       <div className="route-curtain" key={`curtain-${location.pathname}`} aria-hidden="true" />
-      <header className={`site-nav ${location.pathname === "/" ? "site-nav--overlay" : ""}`}>
+      <header className={`site-nav ${overlayNav ? "site-nav--overlay" : "site-nav--solid"}`}>
         <Link className="wordmark" to="/" aria-label="Gayatri Lokesh Architects home">
           <img className="wordmark-logo" src="images/gl-associates-logo-transparent.png" alt="" />
           <span className="wordmark-name">Gayatri Lokesh<br />Architects LLP</span>
@@ -111,18 +139,26 @@ export function SiteLayout() {
             </NavLink>
           ))}
         </nav>
-        <NavLink className="contact-pill" to="/contact">Contact</NavLink>
-        <button className="menu-button" type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu"><List size={24} /></button>
+        <NavLink className="contact-button" to="/contact">Contact</NavLink>
+        <button className="menu-button" type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu" aria-expanded={menuOpen} aria-controls="mobile-menu"><List size={23} weight="light" /></button>
       </header>
 
-      <div className={`mobile-menu ${menuOpen ? "is-open" : ""}`} aria-hidden={!menuOpen}>
-        <Link className="mobile-menu__brand" to="/" aria-label="Gayatri Lokesh Architects home">
-          <img src="images/gl-associates-logo-transparent.png" alt="" />
-          <span>Gayatri Lokesh<br />Architects LLP</span>
-        </Link>
-        <button type="button" onClick={() => setMenuOpen(false)} aria-label="Close menu"><X size={28} /></button>
-        {navItems.map(({ label, href }) => <NavLink key={href} to={href}>{label}</NavLink>)}
-        <NavLink to="/contact">Contact</NavLink>
+      <div id="mobile-menu" className={`mobile-menu ${menuOpen ? "is-open" : ""}`} aria-hidden={!menuOpen} inert={menuOpen ? undefined : true}>
+        <div className="mobile-menu__top">
+          <Link className="mobile-menu__brand" to="/" aria-label="Gayatri Lokesh Architects home">
+            <img src="images/gl-associates-logo-transparent.png" alt="" />
+            <span>Gayatri Lokesh<br />Architects LLP</span>
+          </Link>
+          <button type="button" onClick={() => setMenuOpen(false)} aria-label="Close menu"><X size={25} weight="light" /></button>
+        </div>
+        <nav aria-label="Mobile navigation">
+          {navItems.map(({ label, href }) => <NavLink key={href} to={href}>{label}</NavLink>)}
+          <NavLink to="/contact">Contact</NavLink>
+        </nav>
+        <div className="mobile-menu__footer">
+          <a href="mailto:projects@gl-associates.net">projects@gl-associates.net</a>
+          <span>Mumbai and Pune</span>
+        </div>
       </div>
 
       <div ref={pageRef} key={`page-${location.pathname}`} className="route-page">
@@ -136,25 +172,26 @@ export function SiteLayout() {
 function Footer() {
   return (
     <footer className="footer page-pad">
-      <div className="footer__details">
-        <div><span>Work</span><Link to="/projects/architecture">Architecture</Link><Link to="/projects/interior">Interior</Link><Link to="/journal">Journal</Link></div>
-        <div><span>Studio</span><Link to="/studio">About</Link><Link to="/team">People</Link><Link to="/contact">Contact</Link></div>
-        <div><span>Project inquiries</span><a href="mailto:projects@gl-associates.net">projects@gl-associates.net</a><span className="detail-line">Mumbai, Pune</span></div>
-        <div><span>Phone</span><a href="tel:+917507353159">+91 75073 53159</a><span className="detail-line">Narayan Peth, Pune 411030</span></div>
+      <div className="footer__top">
+        <div className="footer__identity">
+          <img src="images/gl-associates-logo-transparent.png" alt="Gayatri Lokesh Architects logo" loading="lazy" />
+          <p>Gayatri Lokesh Architects LLP</p>
+        </div>
+        <div className="footer__details">
+          <div><span>Work</span><Link to="/projects/architecture">Architecture</Link><Link to="/projects/interior">Interior</Link><Link to="/journal">Journal</Link></div>
+          <div><span>Studio</span><Link to="/studio">About</Link><Link to="/team">People</Link><Link to="/contact">Contact</Link></div>
+          <div><span>Project inquiries</span><a href="mailto:projects@gl-associates.net">projects@gl-associates.net</a><span>Mumbai, Pune</span></div>
+          <div><span>Phone</span><a href="tel:+917507353159">+91 75073 53159</a><span>Narayan Peth, Pune 411030</span></div>
+        </div>
       </div>
-      <div className="footer__brand">
-        <img className="footer__logo" src="images/gl-associates-logo-transparent.png" alt="Gayatri Lokesh Architects logo" loading="lazy" />
-        <div className="footer__wordmark"><span>GAYATRI LOKESH</span> <span>ARCHITECTS</span></div>
-      </div>
-      <Link className="footer__gallery" to="/projects" aria-label="Explore projects">
-        <img src="images/spirit-front.jpg" alt="Spirit of the Place exterior" loading="lazy" />
-        <img src="images/liberation-courtyard.jpg" alt="Liberation courtyard" loading="lazy" />
-        <img src="images/stair-home.jpg" alt="Residential stair detail" loading="lazy" />
-        <span>Explore work <ArrowUpRight size={18} /></span>
+      <Link className="footer__wordmark" to="/projects">
+        <span>GAYATRI LOKESH</span>
+        <span>ARCHITECTS</span>
+        <ArrowUpRight size={24} weight="light" />
       </Link>
       <div className="footer__base">
         <span>Gayatri Lokesh Architects LLP © 2026</span>
-        <span><Link to="/privacy">Privacy</Link> <Link to="/terms">Terms</Link></span>
+        <span><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link></span>
       </div>
     </footer>
   );

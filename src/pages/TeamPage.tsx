@@ -21,24 +21,26 @@ const people = [
 export function TeamPage() {
   return (
     <>
-      <section className="inner-hero page-pad">
+      <section className="team-header page-pad">
         <p data-reveal>People</p>
-        <h1><span data-line-reveal>Two minds.</span><br /><span data-line-reveal>One evolving</span> <span data-line-reveal className="display-italic">practice.</span></h1>
+        <h1 data-reveal>Two perspectives. One evolving practice.</h1>
       </section>
       <section className="team-list page-pad">
-        {people.map((person, index) => (
+        {people.map((person) => (
           <article className="person" key={person.name}>
-            <figure data-reveal data-parallax><img src={person.image} alt={`${person.name}, ${person.role}`} /></figure>
+            <figure data-image-reveal><img src={person.image} alt={`${person.name}, ${person.role}`} /></figure>
             <div className="person__copy" data-reveal>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <h2>{person.name}</h2>
               <p className="person__role">{person.role}<br />{person.credentials}</p>
+              <h2>{person.name}</h2>
               <p>{person.bio}</p>
             </div>
           </article>
         ))}
       </section>
-      <section className="next-page page-pad" data-reveal><p>Have a project or collaboration in mind?</p><Link to="/contact">Contact the studio <ArrowUpRight size={18} /></Link></section>
+      <section className="team-collaboration page-pad" data-reveal>
+        <p>The practice grows through close collaboration with clients, craftspeople, consultants and builders.</p>
+        <Link to="/contact">Contact <ArrowUpRight size={18} weight="light" /></Link>
+      </section>
     </>
   );
 }
