@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "qa:overlap": "node scripts/qa-overlap.mjs"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "latest",
