@@ -1,3 +1,7 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
 :root {
   font-family: "Manrope Variable", "Helvetica Neue", Arial, sans-serif;
   color: #171817;
@@ -938,14 +942,27 @@ html[data-surface="light"] .scene-counter {
   max-height: min(54vh, 520px);
 }
 
+.project-browser[data-mode="row"] {
+  display: block;
+  grid-template-columns: none;
+  /* the row keeps the shipped panel height, so centre the slack it leaves */
+  margin-block: auto;
+  max-height: min(58vh, 430px);
+}
+
+.project-browser__row {
+  max-width: none;
+  padding: 0;
+}
+
 .project-browser[data-count="1"] { grid-template-columns: minmax(0, 1fr); }
 .project-browser[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .project-browser[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .project-browser[data-count="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .project-browser[data-count="5"] { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-.project-browser[data-count="11"] a:last-child { grid-column: span 2; }
+.project-browser[data-mode="grid"][data-count="11"] a:last-child { grid-column: span 2; }
 
-.project-browser a {
+.project-browser[data-mode="grid"] a {
   position: relative;
   overflow: hidden;
   min-width: 0;
@@ -953,7 +970,7 @@ html[data-surface="light"] .scene-counter {
   background: var(--paper-deep);
 }
 
-.project-browser a::after {
+.project-browser[data-mode="grid"] a::after {
   content: "";
   position: absolute;
   inset: 35% 0 0;
@@ -961,7 +978,7 @@ html[data-surface="light"] .scene-counter {
   pointer-events: none;
 }
 
-.project-browser img {
+.project-browser[data-mode="grid"] img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -969,13 +986,13 @@ html[data-surface="light"] .scene-counter {
   transition: transform 550ms var(--ease), filter 550ms ease;
 }
 
-.project-browser a:hover img,
-.project-browser a:focus-visible img {
+.project-browser[data-mode="grid"] a:hover img,
+.project-browser[data-mode="grid"] a:focus-visible img {
   filter: saturate(0.95) brightness(1);
   transform: scale(1.055);
 }
 
-.project-browser a > span {
+.project-browser[data-mode="grid"] a > span {
   position: absolute;
   z-index: 2;
   right: 12px;
@@ -985,7 +1002,7 @@ html[data-surface="light"] .scene-counter {
   gap: 2px;
 }
 
-.project-browser strong {
+.project-browser[data-mode="grid"] strong {
   overflow: hidden;
   font-size: 12px;
   font-weight: 520;
@@ -993,7 +1010,7 @@ html[data-surface="light"] .scene-counter {
   white-space: nowrap;
 }
 
-.project-browser small {
+.project-browser[data-mode="grid"] small {
   font-size: 8px;
   opacity: 0.66;
 }
@@ -2368,17 +2385,17 @@ html[data-surface="light"] .scene-counter {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .project-browser a > span {
+  .project-browser[data-mode="grid"] a > span {
     right: 7px;
     bottom: 6px;
     left: 7px;
   }
 
-  .project-browser strong {
+  .project-browser[data-mode="grid"] strong {
     font-size: 9px;
   }
 
-  .project-browser small {
+  .project-browser[data-mode="grid"] small {
     font-size: 7px;
   }
 
