@@ -114,6 +114,8 @@ img {
 }
 
 .site-nav {
+  --glass-x: 50%;
+  --glass-y: -40%;
   position: fixed;
   z-index: 80;
   top: 12px;
@@ -138,6 +140,15 @@ img {
   backdrop-filter: blur(24px) saturate(170%) contrast(1.06);
   -webkit-backdrop-filter: blur(24px) saturate(170%) contrast(1.06);
   transform: translateX(-50%);
+  transition: border-color 420ms ease, box-shadow 420ms ease;
+}
+
+.site-nav:hover {
+  border-color: rgba(255, 255, 255, 0.46);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.54),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 18px 50px rgba(13, 15, 12, 0.24);
 }
 
 .site-nav::before,
@@ -152,9 +163,24 @@ img {
 .site-nav::before {
   inset: 0;
   background:
+    radial-gradient(170px circle at var(--glass-x) var(--glass-y), rgba(255, 255, 255, 0.55), transparent 70%),
     radial-gradient(circle at 10% -35%, rgba(255, 255, 255, 0.52), transparent 30%),
     radial-gradient(circle at 88% 130%, rgba(255, 255, 255, 0.18), transparent 31%);
   opacity: 0.72;
+  transition: opacity 420ms ease;
+}
+
+.site-nav:hover::before {
+  opacity: 1;
+}
+
+/* the inner hairline brightens from wherever the pointer sits */
+.site-nav::after {
+  transition: opacity 420ms ease;
+}
+
+.site-nav:hover::after {
+  opacity: 0.6;
 }
 
 .site-nav::after {

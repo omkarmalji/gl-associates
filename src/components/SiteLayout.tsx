@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { ArrowUpRight, List, X } from "@phosphor-icons/react";
 import { Outlet, useLocation } from "react-router-dom";
 import { PageLink as Link, PageNavLink as NavLink } from "./PageLink";
@@ -11,6 +11,7 @@ const navItems = [
 
 export function SiteLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const nav = useRef<HTMLElement>(null);
   const location = useLocation();
   const lightSurface = useMemo(
     () => ["/studio", "/process", "/contact", "/privacy", "/terms"].some((route) => location.pathname.startsWith(route)),
@@ -29,11 +30,26 @@ export function SiteLayout() {
     };
   }, []);
 
+  // the glass catches a highlight where the pointer is, so the bar reads as a
+  // surface rather than a painted strip
+  const trackGlass = (event: ReactPointerEvent<HTMLElement>) => {
+    const element = nav.current;
+    if (!element || event.pointerType === "touch") return;
+    const bounds = element.getBoundingClientRect();
+    element.style.setProperty("--glass-x", `${((event.clientX - bounds.left) / bounds.width) * 100}%`);
+    element.style.setProperty("--glass-y", `${((event.clientY - bounds.top) / bounds.height) * 100}%`);
+  };
+
+  const releaseGlass = () => {
+    nav.current?.style.removeProperty("--glass-x");
+    nav.current?.style.removeProperty("--glass-y");
+  };
+
   return (
     <div className={`site-shell ${lightSurface ? "site-shell--light" : "site-shell--image"}`}>
       <a className="skip-link" href="#main-content">Skip to content</a>
 
-      <header className="site-nav">
+      <header className="site-nav" ref={nav} onPointerMove={trackGlass} onPointerLeave={releaseGlass}>
         <Link className="brand" to="/" aria-label="Gayatri Lokesh Architects home">
           <img src="images/gl-associates-logo-transparent.png" alt="" />
           <span>Gayatri Lokesh<br />Architects LLP</span>
