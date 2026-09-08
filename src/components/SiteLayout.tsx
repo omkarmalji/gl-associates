@@ -1,10 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowUpRight, List, Moon, Sun, X } from "@phosphor-icons/react";
-import { useGSAP } from "@gsap/react";
-import { gsap } from "gsap";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowUpRight, List, X } from "@phosphor-icons/react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-
-gsap.registerPlugin(useGSAP);
 
 const navItems = [
   { label: "Work", href: "/projects" },
@@ -14,9 +10,6 @@ const navItems = [
 
 export function SiteLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">(
-    () => document.documentElement.dataset.theme === "dark" ? "dark" : "light",
-  );
   const location = useLocation();
   const lightSurface = useMemo(
     () => ["/studio", "/process", "/contact", "/privacy", "/terms"].some((route) => location.pathname.startsWith(route)),
@@ -35,18 +28,9 @@ export function SiteLayout() {
     };
   }, []);
 
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem("gl-theme", theme);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#191b18" : "#efefeb");
-  }, [theme]);
-
-  const toggleTheme = () => setTheme((current) => current === "dark" ? "light" : "dark");
-
   return (
     <div className={`site-shell ${lightSurface ? "site-shell--light" : "site-shell--image"}`}>
       <a className="skip-link" href="#main-content">Skip to content</a>
-      {location.pathname === "/" && <BrandIntro />}
 
       <header className="site-nav">
         <Link className="brand" to="/" aria-label="Gayatri Lokesh Architects home">
@@ -61,10 +45,6 @@ export function SiteLayout() {
             ))}
             <NavLink className="nav-contact" to="/contact">Contact</NavLink>
           </nav>
-          <button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>
-            {theme === "dark" ? <Moon size={15} weight="light" /> : <Sun size={15} weight="light" />}
-            <span>{theme === "dark" ? "Dark" : "Light"}</span>
-          </button>
           <button
             className="menu-button"
             type="button"
@@ -94,45 +74,12 @@ export function SiteLayout() {
           <a href="mailto:projects@gl-associates.net">projects@gl-associates.net</a>
           <a href="tel:+917507353159">+91 75073 53159</a>
           <span>Mumbai and Pune</span>
-          <button className="site-menu__theme" type="button" onClick={toggleTheme}>
-            {theme === "dark" ? <Moon size={16} weight="light" /> : <Sun size={16} weight="light" />}
-            {theme === "dark" ? "Dark theme" : "Light theme"}
-          </button>
         </div>
       </div>
 
       <main id="main-content" key={location.pathname}>
         <Outlet />
       </main>
-    </div>
-  );
-}
-function BrandIntro() {
-  const wrapper = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    if (!wrapper.current) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const timeline = gsap.timeline();
-    if (reduce) {
-      timeline.to(wrapper.current, { autoAlpha: 0, duration: 0.2, delay: 0.25 });
-      return () => timeline.kill();
-    }
-    timeline
-      .from(".brand-intro__mark", { opacity: 0, scale: 0.82, duration: 0.7, ease: "power3.out" })
-      .from(".brand-intro__word span", { yPercent: 120, duration: 0.75, stagger: 0.045, ease: "power4.out" }, 0.18)
-      .to(".brand-intro__mark", { rotate: 8, scale: 1.08, duration: 0.7, ease: "power2.inOut" }, 1.05)
-      .to(wrapper.current, { yPercent: -100, duration: 0.9, ease: "power4.inOut" }, 1.45)
-      .set(wrapper.current, { display: "none" });
-    return () => timeline.kill();
-  }, { scope: wrapper });
-
-  return (
-    <div ref={wrapper} className="brand-intro" aria-hidden="true">
-      <img className="brand-intro__mark" src="images/gl-associates-logo-transparent.png" alt="" />
-      <p className="brand-intro__word" aria-label="Gayatri Lokesh Architects">
-        {"GAYATRI LOKESH ARCHITECTS".split("").map((letter, index) => <span key={`${letter}-${index}`}>{letter === " " ? "\u00a0" : letter}</span>)}
-      </p>
     </div>
   );
 }
