@@ -171,9 +171,7 @@ export function SceneDeck({ scenes, ariaLabel, loop = false, hideControls = fals
 
       {!hideControls && (
         <div className="scene-controls" data-deck-ignore>
-          <span className="scene-controls__count" aria-live="polite">
-            {String(active + 1).padStart(2, "0")} / {String(scenes.length).padStart(2, "0")}
-          </span>
+          <span className="scene-controls__count" aria-live="polite">View {active + 1} of {scenes.length}</span>
           <span className="scene-controls__label">{scenes[active]?.label}</span>
           <div className="scene-controls__buttons">
             <button type="button" onClick={() => goTo(active - 1)} disabled={!loop && active === 0} aria-label="Previous view">

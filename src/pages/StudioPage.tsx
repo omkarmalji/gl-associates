@@ -32,7 +32,7 @@ function Founders() {
         <div><h2>Gayatri Deshmukh</h2><p>Co-founder, architect and conservationist</p></div>
       </div>
       <div className="founder founder--lokesh">
-        <img src="images/original/team-02.jpg" alt="Lokesh Kadam" />
+        <img src="images/original/team-01.jpg" alt="Lokesh Kadam" />
         <div><h2>Lokesh Kadam</h2><p>Co-founder, architect and designer</p></div>
       </div>
       <p className="founders-scene__statement">The practice grows through observation, mentorship and the relationships that hold a project together.</p>

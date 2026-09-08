@@ -49,10 +49,10 @@ export function HomePage() {
 
 function ProjectHero({ project, eager = false, variant = 0 }: { project: Project; eager?: boolean; variant?: number }) {
   return (
-    <article className={`project-hero project-hero--${variant}`}>
+    <article className={`project-hero project-hero--${variant} ${project.slug === "brick-abode" ? "project-hero--high-key" : ""}`}>
       <ResponsiveImage image={project.images[0]} eager={eager} />
       <div className="project-hero__veil" />
-      <h1>{project.shortTitle}</h1>
+      <h1><span>{project.shortTitle}</span></h1>
       <div className="project-hero__meta">
         <span>Project</span>
         <p>{project.location}<br />{project.status}</p>

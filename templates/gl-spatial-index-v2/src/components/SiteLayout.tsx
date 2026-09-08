@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowUpRight, List, X } from "@phosphor-icons/react";
+import { ArrowUpRight, List, Moon, Sun, X } from "@phosphor-icons/react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
@@ -14,6 +14,9 @@ const navItems = [
 
 export function SiteLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">(
+    () => document.documentElement.dataset.theme === "dark" ? "dark" : "light",
+  );
   const location = useLocation();
   const lightSurface = useMemo(
     () => ["/studio", "/process", "/contact", "/privacy", "/terms"].some((route) => location.pathname.startsWith(route)),
@@ -32,6 +35,14 @@ export function SiteLayout() {
     };
   }, []);
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem("gl-theme", theme);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#191b18" : "#efefeb");
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((current) => current === "dark" ? "light" : "dark");
+
   return (
     <div className={`site-shell ${lightSurface ? "site-shell--light" : "site-shell--image"}`}>
       <a className="skip-link" href="#main-content">Skip to content</a>
@@ -43,23 +54,28 @@ export function SiteLayout() {
           <span>Gayatri Lokesh<br />Architects LLP</span>
         </Link>
 
-        <nav className="desktop-nav" aria-label="Primary navigation">
-          {navItems.map(({ label, href }) => (
-            <NavLink key={href} to={href} className={({ isActive }) => isActive ? "is-active" : ""}>{label}</NavLink>
-          ))}
-          <NavLink className="nav-contact" to="/contact">Contact</NavLink>
-        </nav>
-
-        <button
-          className="menu-button"
-          type="button"
-          onClick={() => setMenuOpen(true)}
-          aria-label="Open menu"
-          aria-expanded={menuOpen}
-          aria-controls="site-menu"
-        >
-          <List size={23} weight="light" />
-        </button>
+        <div className="site-nav__actions">
+          <nav className="desktop-nav" aria-label="Primary navigation">
+            {navItems.map(({ label, href }) => (
+              <NavLink key={href} to={href} className={({ isActive }) => isActive ? "is-active" : ""}>{label}</NavLink>
+            ))}
+            <NavLink className="nav-contact" to="/contact">Contact</NavLink>
+          </nav>
+          <button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>
+            {theme === "dark" ? <Moon size={15} weight="light" /> : <Sun size={15} weight="light" />}
+            <span>{theme === "dark" ? "Dark" : "Light"}</span>
+          </button>
+          <button
+            className="menu-button"
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+            aria-controls="site-menu"
+          >
+            <List size={23} weight="light" />
+          </button>
+        </div>
       </header>
 
       <div id="site-menu" className={`site-menu ${menuOpen ? "is-open" : ""}`} aria-hidden={!menuOpen} inert={menuOpen ? undefined : true}>
@@ -78,6 +94,10 @@ export function SiteLayout() {
           <a href="mailto:projects@gl-associates.net">projects@gl-associates.net</a>
           <a href="tel:+917507353159">+91 75073 53159</a>
           <span>Mumbai and Pune</span>
+          <button className="site-menu__theme" type="button" onClick={toggleTheme}>
+            {theme === "dark" ? <Moon size={16} weight="light" /> : <Sun size={16} weight="light" />}
+            {theme === "dark" ? "Dark theme" : "Light theme"}
+          </button>
         </div>
       </div>
 

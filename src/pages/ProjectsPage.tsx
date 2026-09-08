@@ -50,18 +50,22 @@ function ProjectsOpening({
 }) {
   return (
     <article className="projects-opening">
-      <p className="projects-opening__statement">Architecture shaped by true stories, working landscapes and lived experience.</p>
+      <div className="projects-opening__header">
+        <h1>Work</h1>
+        <p>Architecture shaped by true stories, working landscapes and lived experience.</p>
+      </div>
       <div className="project-filters" data-deck-ignore>
         {filters.map((item) => (
-          <button className={item === activeFilter ? "is-active" : ""} type="button" onClick={() => onFilter(item)} key={item}>
+          <button className={item === activeFilter ? "is-active" : ""} type="button" onClick={() => onFilter(item)} aria-pressed={item === activeFilter} key={item}>
             {item}
           </button>
         ))}
       </div>
-      <div className="projects-opening__strip">
-        {visibleProjects.slice(0, 7).map((project) => (
+      <div className="project-browser" data-count={visibleProjects.length}>
+        {visibleProjects.map((project) => (
           <Link to={`/projects/${project.slug}`} key={project.slug} aria-label={`View ${project.title}`}>
             <ResponsiveImage image={project.images[0]} />
+            <span><strong>{project.shortTitle}</strong><small>{project.category}</small></span>
           </Link>
         ))}
       </div>
