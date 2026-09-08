@@ -22,6 +22,44 @@ type SceneDeckProps = {
 
 const clamp = (value: number, max: number) => Math.max(0, Math.min(value, max));
 
+const REVEAL = "h1, h2, h3, p, dl, blockquote, figcaption, small, strong, a, span";
+// oversized display words and image veils are atmosphere, not copy
+const REVEAL_SKIP = "[class*='backdrop'], [class*='ghost'], [class*='veil'], [aria-hidden='true']";
+
+/**
+ * The outermost text blocks in a scene, in document order. Nested matches are
+ * dropped so a paragraph and the link inside it do not both animate.
+ */
+function revealTargets(scene: HTMLElement) {
+  const picked: HTMLElement[] = [];
+  for (const node of scene.querySelectorAll<HTMLElement>(REVEAL)) {
+    if (node.closest(REVEAL_SKIP)) continue;
+    if (!node.textContent?.trim()) continue;
+    if (picked.some((chosen) => chosen.contains(node))) continue;
+    picked.push(node);
+  }
+  return picked;
+}
+
+/**
+ * Copy settles upward as a scene arrives. `y: "+=..."` keeps whatever transform
+ * the layout already applies — several of these blocks are centred with
+ * translate(-50%, -50%) — and clearProps hands styling back to the stylesheet.
+ */
+function revealCopy(scene: HTMLElement, delay: number) {
+  const targets = revealTargets(scene);
+  if (!targets.length) return null;
+  return gsap.from(targets, {
+    autoAlpha: 0,
+    y: "+=26",
+    duration: 0.9,
+    delay,
+    ease: "power3.out",
+    stagger: { amount: 0.55 },
+    clearProps: "transform,opacity,visibility",
+  });
+}
+
 export function SceneDeck({ scenes, ariaLabel, loop = false, hideControls = false }: SceneDeckProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const requested = Number.parseInt(searchParams.get("scene") ?? "0", 10);
@@ -96,7 +134,9 @@ export function SceneDeck({ scenes, ariaLabel, loop = false, hideControls = fals
       gsap.set(incoming, { autoAlpha: 1, pointerEvents: "auto", yPercent: 0, scale: 1 });
       transitioning.current = false;
       previous.current = null;
-      return;
+      // first paint of the deck, so the copy reads in rather than appearing
+      const intro = reduceMotion ? null : revealCopy(incoming, 0.18);
+      return () => intro?.revert();
     }
 
     // sections travel a full viewport, so the deck reads as a page scrolling
@@ -118,8 +158,13 @@ export function SceneDeck({ scenes, ariaLabel, loop = false, hideControls = fals
     // the outgoing section trails slightly, which keeps the eye on the arriving one
     if (outgoing) timeline.to(outgoing, { yPercent: sign * -38, ease: "power2.inOut" }, 0);
     timeline.to(incoming, { yPercent: 0 }, 0);
+    // copy catches up once the section has most of the frame
+    const copy = revealCopy(incoming, 0.42);
 
-    return () => timeline.kill();
+    return () => {
+      timeline.kill();
+      copy?.revert();
+    };
   }, { scope: deck, dependencies: [active, reduceMotion] });
 
   useEffect(() => {

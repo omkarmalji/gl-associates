@@ -15,7 +15,7 @@ const browser = await chromium.launch({
 const report = [];
 const errors = [];
 
-async function audit(name, hash, viewport, wait = 900) {
+async function audit(name, hash, viewport, wait = 2200) {
   const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
   page.on("console", (message) => {
     if (message.type() === "error") errors.push(`${name}: console: ${message.text()}`);
@@ -72,7 +72,7 @@ async function audit(name, hash, viewport, wait = 900) {
   return page;
 }
 
-let page = await audit("desktop-home-00", "#/", { width: 1440, height: 900 }, 1200);
+let page = await audit("desktop-home-00", "#/", { width: 1440, height: 900 });
 await page.mouse.wheel(0, 720);
 await page.waitForTimeout(1100);
 await page.screenshot({ path: path.join(output, "desktop-home-wheel.png") });
@@ -92,7 +92,7 @@ for (const [name, hash, wait = 900] of [
   ["desktop-process", "#/process?scene=1"],
   ["desktop-contact", "#/contact?scene=1"],
 ]) {
-  page = await audit(name, hash, { width: 1440, height: 900 }, wait);
+  page = await audit(name, hash, { width: 1440, height: 900 }, Math.max(wait, 2200));
   await page.close();
 }
 
@@ -106,7 +106,7 @@ for (const [name, hash] of [
   ["mobile-process", "#/process?scene=1"],
   ["mobile-contact", "#/contact?scene=1"],
 ]) {
-  page = await audit(name, hash, { width: 390, height: 844 }, name.startsWith("mobile-home") ? 1200 : 900);
+  page = await audit(name, hash, { width: 390, height: 844 });
   if (name === "mobile-home") {
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.waitForTimeout(500);

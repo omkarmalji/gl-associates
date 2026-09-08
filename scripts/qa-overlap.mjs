@@ -132,7 +132,7 @@ for (const [vpName, viewport] of viewports) {
     for (let scene = 0; scene < sceneCount; scene += 1) {
       const url = `${base}${hash}${scene === 0 ? "" : (hash.includes("?") ? "&" : "?") + `scene=${scene}`}`;
       await page.goto(url, { waitUntil: "networkidle" });
-      await page.waitForTimeout(scene === 0 ? 1100 : 900);
+      await page.waitForTimeout(2200);
       const result = await page.evaluate(collect);
       const id = `${vpName}-${routeName}-${scene}`;
       if (result.overlaps.length || result.offscreen.length || result.scrollWidth !== result.innerWidth) {
