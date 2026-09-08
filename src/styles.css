@@ -942,6 +942,12 @@ html[data-surface="light"] .scene-counter {
   max-height: min(54vh, 520px);
 }
 
+.project-browser[data-mode="stack"] {
+  display: block;
+  grid-template-columns: none;
+  max-height: none;
+}
+
 .project-browser[data-mode="row"] {
   display: block;
   grid-template-columns: none;
