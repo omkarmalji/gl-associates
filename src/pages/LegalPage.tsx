@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { PageLink as Link } from "../components/PageLink";
 
 export function LegalPage({ type }: { type: "Privacy" | "Terms" }) {
   return (

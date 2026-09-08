@@ -35,6 +35,7 @@ const collect = () => {
     "scene-deck__stage",
     "project-hero__veil",
     "skip-link",
+    "visually-hidden",
   ];
   // oversized display words that bleed off the frame on purpose
   const IGNORE_SELECTOR = ".project-pair > p, .project-study > p";
@@ -46,7 +47,7 @@ const collect = () => {
 
   const candidates = [];
   const activeScene = document.querySelector("[data-scene][data-active='true']");
-  const roots = [activeScene, document.querySelector(".site-nav"), document.querySelector(".scene-controls")].filter(Boolean);
+  const roots = [activeScene, document.querySelector(".site-nav"), document.querySelector(".scene-counter")].filter(Boolean);
 
   for (const root of roots) {
     const nodes = [root, ...root.querySelectorAll("*")];

@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "@phosphor-icons/react";
-import { Link } from "react-router-dom";
+import { PageLink as Link } from "../components/PageLink";
 import { ResponsiveImage } from "../components/ResponsiveImage";
 import { SceneDeck, type Scene } from "../components/SceneDeck";
 import { featuredProjects, practice, projects, type Project } from "../data";

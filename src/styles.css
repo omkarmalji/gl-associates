@@ -18,7 +18,7 @@
   --action-fg: #f1f0ea;
   --logo-filter: none;
   --nav-height: 58px;
-  --deck-pill: 236px;
+  --deck-counter: 42px;
   --edge: clamp(18px, 2.2vw, 42px);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -363,45 +363,44 @@ img {
   background: var(--paper);
 }
 
-.scene-controls {
+.visually-hidden {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.scene-counter {
   position: fixed;
   z-index: 65;
   right: var(--edge);
-  bottom: 18px;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-areas: "count label";
-  align-items: center;
-  column-gap: 9px;
-  width: var(--deck-pill);
-  min-height: 44px;
-  padding: 3px 16px;
-  color: var(--floating-fg);
-  background:
-    linear-gradient(118deg, rgba(255, 255, 255, 0.14), transparent 36%, rgba(255, 255, 255, 0.08)),
-    rgba(17, 19, 16, 0.62);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 999px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.38),
-    0 12px 34px rgba(13, 15, 12, 0.16);
-  backdrop-filter: blur(20px) saturate(165%) contrast(1.05);
-  -webkit-backdrop-filter: blur(20px) saturate(165%) contrast(1.05);
+  bottom: 22px;
+  display: flex;
+  gap: 3px;
+  width: var(--deck-counter);
+  margin: 0;
+  justify-content: flex-end;
+  color: var(--off-white);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
 }
 
-.scene-controls__count {
-  grid-area: count;
-  font-size: 9px;
-  opacity: 0.68;
+.scene-counter span {
+  opacity: 0.5;
 }
 
-.scene-controls__label {
-  grid-area: label;
-  overflow: hidden;
-  font-size: 11px;
-  font-weight: 560;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+html[data-surface="light"] .scene-counter {
+  color: var(--ink);
+  text-shadow: none;
+  opacity: 0.42;
 }
 
 .project-hero {
@@ -532,20 +531,31 @@ img {
 .project-hero__link {
   position: absolute;
   z-index: 6;
-  right: calc(var(--edge) + var(--deck-pill) + 16px);
-  bottom: 18px;
+  right: calc(var(--edge) + var(--deck-counter) + 12px);
+  bottom: 16px;
   display: grid;
   place-items: center;
-  width: 46px;
+  width: 52px;
   height: 46px;
-  color: var(--off-white);
-  border: 1px solid currentColor;
-  transition: color 250ms ease, background 250ms ease;
+  color: var(--floating-fg);
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.16), transparent 34%, rgba(255, 255, 255, 0.08)),
+    rgba(17, 19, 16, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 12px 32px rgba(13, 15, 12, 0.18);
+  backdrop-filter: blur(20px) saturate(165%) contrast(1.05);
+  -webkit-backdrop-filter: blur(20px) saturate(165%) contrast(1.05);
+  transition: background-color 250ms ease, transform 250ms var(--ease);
 }
 
 .project-hero__link:hover {
-  color: var(--ink);
-  background: var(--off-white);
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.22), transparent 34%, rgba(255, 255, 255, 0.12)),
+    rgba(17, 19, 16, 0.72);
+  transform: translateY(-2px);
 }
 
 .project-composition {
@@ -823,7 +833,7 @@ img {
   left: var(--edge);
   display: flex;
   justify-content: space-between;
-  padding-right: calc(var(--deck-pill) + 24px);
+  padding-right: calc(var(--deck-counter) + 20px);
   font-size: 10px;
   color: var(--muted);
 }
@@ -839,7 +849,7 @@ img {
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: calc(var(--nav-height) + 4vh) var(--edge) 74px;
+  padding: calc(var(--nav-height) + 4vh) var(--edge) 38px;
 }
 
 .projects-opening__header {
@@ -2108,12 +2118,8 @@ img {
     gap: 8px;
   }
 
-  .scene-controls {
-    right: 12px;
-    bottom: 12px;
-    left: 12px;
-    width: auto;
-    padding: 3px 14px;
+  .scene-counter {
+    bottom: 16px;
   }
 
   .project-hero h1,
@@ -2135,21 +2141,20 @@ img {
   }
 
   .project-hero__meta {
-    bottom: 72px;
+    bottom: 28px;
     left: 16px;
     width: 170px;
     font-size: 10px;
   }
 
   .project-hero__link {
-    right: 16px;
-    bottom: 72px;
-    width: 42px;
+    bottom: 12px;
+    width: 48px;
     height: 42px;
   }
 
   .project-composition {
-    padding: 80px 16px 68px;
+    padding: 80px 16px 24px;
   }
 
   .project-composition__image--large {
@@ -2191,7 +2196,7 @@ img {
   }
 
   .manifesto-scene {
-    padding: 90px 20px 76px;
+    padding: 90px 20px 32px;
   }
 
   .manifesto-scene__identity {
@@ -2213,11 +2218,11 @@ img {
 
   .manifesto-scene > a {
     right: 20px;
-    bottom: 82px;
+    bottom: 38px;
   }
 
   .typology-scene {
-    padding: 78px 16px 64px;
+    padding: 78px 16px 20px;
   }
 
   .typology-scene__backdrop {
@@ -2275,7 +2280,7 @@ img {
 
   .closing-scene__footer {
     right: 16px;
-    bottom: 68px;
+    bottom: 24px;
     left: 16px;
     display: grid;
     gap: 8px;
@@ -2283,7 +2288,7 @@ img {
   }
 
   .projects-opening {
-    padding: 84px 12px 76px;
+    padding: 84px 12px 32px;
   }
 
   .projects-opening__header {
@@ -2364,7 +2369,7 @@ img {
   .project-index-visual--2 .project-index-visual__slab {
     top: auto;
     right: 16px;
-    bottom: 74px;
+    bottom: 30px;
     left: 16px;
     width: auto;
     min-height: 210px;
@@ -2425,7 +2430,7 @@ img {
   }
 
   .project-statement {
-    padding: 90px 16px 70px;
+    padding: 90px 16px 26px;
   }
 
   .project-statement > p {
@@ -2435,26 +2440,26 @@ img {
 
   .project-statement__frame {
     right: 16px;
-    bottom: 76px;
+    bottom: 32px;
     width: 48vw;
     height: 25vh;
   }
 
   .project-statement > span {
-    bottom: 78px;
+    bottom: 34px;
     left: 16px;
     width: 42vw;
     font-size: 10px;
   }
 
   .project-full-image__caption {
-    bottom: 72px;
+    bottom: 28px;
     left: 16px;
   }
 
   .project-pair,
   .project-study {
-    padding: 84px 16px 70px;
+    padding: 84px 16px 26px;
   }
 
   .project-pair__one {
@@ -2494,14 +2499,14 @@ img {
   .project-study > p {
     top: auto;
     right: 16px;
-    bottom: 82px;
+    bottom: 38px;
     left: auto;
     width: 43%;
     font-size: 11px;
   }
 
   .next-project {
-    padding: 90px 16px 72px;
+    padding: 90px 16px 28px;
   }
 
   .next-project > a {
@@ -2512,13 +2517,13 @@ img {
 
   .next-project__image {
     right: 0;
-    bottom: 73px;
+    bottom: 29px;
     width: 54vw;
     height: 26vh;
   }
 
   .studio-manifesto {
-    padding: 90px 20px 70px;
+    padding: 90px 20px 26px;
   }
 
   .studio-manifesto > img {
@@ -2534,14 +2539,14 @@ img {
   }
 
   .studio-manifesto > p {
-    bottom: 73px;
+    bottom: 29px;
     left: 20px;
     width: 52%;
     font-size: 10px;
   }
 
   .founders-scene {
-    padding: 82px 16px 68px;
+    padding: 82px 16px 24px;
   }
 
   .founder--gayatri {
@@ -2612,7 +2617,7 @@ img {
   }
 
   .fields-scene {
-    padding: 90px 20px 70px;
+    padding: 90px 20px 26px;
   }
 
   .fields-scene h2 {
@@ -2622,7 +2627,7 @@ img {
 
   .fields-scene__grid {
     right: 20px;
-    bottom: 75px;
+    bottom: 31px;
     left: 20px;
     width: auto;
     gap: 18px 22px;
@@ -2643,7 +2648,7 @@ img {
   }
 
   .studio-contact > div {
-    bottom: 72px;
+    bottom: 28px;
     left: 16px;
     display: grid;
     gap: 7px;
@@ -2657,7 +2662,7 @@ img {
 
   .process-opening > p {
     right: 16px;
-    bottom: 75px;
+    bottom: 31px;
     width: 52%;
     font-size: 10px;
   }
@@ -2707,7 +2712,7 @@ img {
 
   .observation-scene > div {
     right: 16px;
-    bottom: 78px;
+    bottom: 34px;
     left: 16px;
     width: auto;
   }
@@ -2757,7 +2762,7 @@ img {
 
   .contact-opening {
     display: block;
-    padding: 82px 16px 70px;
+    padding: 82px 16px 26px;
   }
 
   .contact-opening__copy {
@@ -2792,7 +2797,7 @@ img {
 
   .project-form-scene {
     display: block;
-    padding: 82px 16px 70px;
+    padding: 82px 16px 26px;
   }
 
   .project-form-scene__intro {
@@ -2916,21 +2921,49 @@ img {
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .site-nav,
-  .scene-controls {
+  .project-hero__link {
     background: rgba(24, 26, 23, 0.96);
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
   .site-nav,
-  .scene-controls {
+  .project-hero__link {
     background: rgba(24, 26, 23, 0.96);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
 }
 
+/* ---- route changes cross-fade instead of cutting ---- */
+@keyframes route-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+@keyframes route-out {
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+::view-transition-old(root) {
+  animation: route-out 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+::view-transition-new(root) {
+  animation: route-in 520ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+
   *,
   *::before,
   *::after {

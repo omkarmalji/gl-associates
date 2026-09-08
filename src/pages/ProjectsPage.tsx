@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "@phosphor-icons/react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { PageLink as Link } from "../components/PageLink";
 import { ResponsiveImage } from "../components/ResponsiveImage";
 import { SceneDeck, type Scene } from "../components/SceneDeck";
 import { projects, type Project, type ProjectCategory } from "../data";

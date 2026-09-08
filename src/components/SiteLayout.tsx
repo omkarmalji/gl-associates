@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowUpRight, List, X } from "@phosphor-icons/react";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
+import { PageLink as Link, PageNavLink as NavLink } from "./PageLink";
 
 const navItems = [
   { label: "Work", href: "/projects" },

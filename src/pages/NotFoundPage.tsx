@@ -1,5 +1,5 @@
 import { ArrowLeft } from "@phosphor-icons/react";
-import { Link } from "react-router-dom";
+import { PageLink as Link } from "../components/PageLink";
 
 export function NotFoundPage() {
   return (

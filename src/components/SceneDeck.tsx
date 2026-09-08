@@ -57,7 +57,7 @@ export function SceneDeck({ scenes, ariaLabel, loop = false, hideControls = fals
   }, [active, loop, reduceMotion, scenes.length, searchParams, setSearchParams]);
 
   useEffect(() => {
-    const tone = scenes[active]?.className?.includes("scene--paper") ? "light" : "image";
+    const tone = scenes[active]?.className?.includes("scene--image") ? "image" : "light";
     document.documentElement.dataset.surface = tone;
     return () => {
       delete document.documentElement.dataset.surface;
@@ -99,20 +99,25 @@ export function SceneDeck({ scenes, ariaLabel, loop = false, hideControls = fals
       return;
     }
 
+    // sections travel a full viewport, so the deck reads as a page scrolling
+    // rather than a stack of slides dissolving into each other
     const sign = direction.current;
     const timeline = gsap.timeline({
-      defaults: { ease: "power3.inOut" },
+      defaults: { ease: "power2.inOut", duration: 0.92 },
       onComplete: () => {
-        if (outgoing) gsap.set(outgoing, { autoAlpha: 0, pointerEvents: "none", yPercent: 0, scale: 1 });
+        if (outgoing) gsap.set(outgoing, { autoAlpha: 0, pointerEvents: "none", yPercent: 0, scale: 1, zIndex: 0 });
+        gsap.set(incoming, { zIndex: 0 });
         transitioning.current = false;
         if (transitionTimer.current !== null) window.clearTimeout(transitionTimer.current);
         transitionTimer.current = null;
         previous.current = null;
       },
     });
-    gsap.set(incoming, { autoAlpha: 0, pointerEvents: "auto", yPercent: sign * 7, scale: 1.035 });
-    if (outgoing) timeline.to(outgoing, { autoAlpha: 0, yPercent: sign * -5, scale: 0.975, duration: 0.72 }, 0);
-    timeline.to(incoming, { autoAlpha: 1, yPercent: 0, scale: 1, duration: 0.9 }, 0.08);
+    gsap.set(incoming, { autoAlpha: 1, pointerEvents: "auto", yPercent: sign * 100, scale: 1, zIndex: 2 });
+    if (outgoing) gsap.set(outgoing, { zIndex: 1 });
+    // the outgoing section trails slightly, which keeps the eye on the arriving one
+    if (outgoing) timeline.to(outgoing, { yPercent: sign * -38, ease: "power2.inOut" }, 0);
+    timeline.to(incoming, { yPercent: 0 }, 0);
 
     return () => timeline.kill();
   }, { scope: deck, dependencies: [active, reduceMotion] });
@@ -169,11 +174,14 @@ export function SceneDeck({ scenes, ariaLabel, loop = false, hideControls = fals
       </div>
 
       {!hideControls && (
-        <div className="scene-controls" data-deck-ignore>
-          <span className="scene-controls__count" aria-live="polite">View {active + 1} of {scenes.length}</span>
-          <span className="scene-controls__label">{scenes[active]?.label}</span>
-        </div>
+        <p className="scene-counter" data-deck-ignore aria-hidden="true">
+          {String(active + 1).padStart(2, "0")}<span>/</span>{String(scenes.length).padStart(2, "0")}
+        </p>
       )}
+
+      <p className="visually-hidden" aria-live="polite">
+        View {active + 1} of {scenes.length}: {scenes[active]?.label}
+      </p>
     </div>
   );
 }

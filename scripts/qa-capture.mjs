@@ -40,7 +40,7 @@ async function audit(name, hash, viewport, wait = 900) {
       .map((element) => ({ tag: element.tagName, className: element.className, text: element.textContent?.trim().slice(0, 80), rect: element.getBoundingClientRect().toJSON() }));
     const brokenImages = Array.from(document.images).filter((image) => image.complete && image.naturalWidth === 0).map((image) => image.src);
     const activeScene = document.querySelector("[data-scene][data-active='true']");
-    const visibilitySurfaces = Array.from(document.querySelectorAll(".site-nav, .brand, .desktop-nav, .scene-controls, .project-hero--high-key h1 span"))
+    const visibilitySurfaces = Array.from(document.querySelectorAll(".site-nav, .brand, .desktop-nav, .project-hero__link, .project-hero--high-key h1 span"))
       .filter((element) => {
         const rect = element.getBoundingClientRect();
         const style = getComputedStyle(element);
@@ -50,7 +50,7 @@ async function audit(name, hash, viewport, wait = 900) {
         role: element.matches(".site-nav") ? "site navigation"
           : element.matches(".brand") ? "brand"
             : element.matches(".desktop-nav") ? "desktop navigation"
-              : element.matches(".scene-controls") ? "scene navigation"
+              : element.matches(".project-hero__link") ? "project link"
                 : "high-key title",
         className: element.className,
         background: getComputedStyle(element).backgroundColor,
@@ -136,7 +136,7 @@ const alpha = (color) => color.startsWith("rgba") ? Number.parseFloat(color.matc
 const visibilityFailures = report.flatMap((entry) => (entry.visibilitySurfaces ?? [])
   .filter((surface) => {
     const required = surface.role === "site navigation"
-      || surface.role === "scene navigation"
+      || surface.role === "project link"
       || surface.role === "high-key title"
     return required && alpha(surface.background) < 0.5;
   })
