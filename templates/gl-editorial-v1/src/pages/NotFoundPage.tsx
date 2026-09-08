@@ -5,7 +5,7 @@ export function NotFoundPage() {
   return (
     <section className="not-found page-pad">
       <p>404</p><h1>This space<br />does not <span className="display-italic">exist.</span></h1>
-      <Link to="/"><ArrowLeft size={17} /> Return home</Link>
+      <Link to="/"><ArrowLeft size={17} weight="light" /> Return home</Link>
     </section>
   );
 }
