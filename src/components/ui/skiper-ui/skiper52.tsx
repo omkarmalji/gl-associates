@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { PageLink } from "@/components/PageLink";
 import { cn } from "@/lib/utils";
@@ -70,14 +70,29 @@ const HoverExpand_001 = ({
   collapsedWidth = "5rem",
   expandedWidth = "24rem",
   panelHeight = "24rem",
+  gap = "0.25rem",
+  followActive = false,
 }: {
   images: { src: string; alt: string; code: string; href?: string; label?: string }[];
   className?: string;
   collapsedWidth?: string;
   expandedWidth?: string;
   panelHeight?: string;
+  gap?: string;
+  followActive?: boolean;
 }) => {
-  const [activeImage, setActiveImage] = useState<number | null>(1);
+  const [activeImage, setActiveImage] = useState<number | null>(0);
+  const panels = useRef<(HTMLDivElement | null)[]>([]);
+
+  // when the strip is wider than the frame, keep the open panel in view
+  useEffect(() => {
+    if (!followActive || activeImage === null) return;
+    panels.current[activeImage]?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "nearest",
+    });
+  }, [activeImage, followActive]);
 
   return (
     <motion.div
@@ -95,11 +110,14 @@ const HoverExpand_001 = ({
         transition={{ duration: 0.3 }}
         className="w-full"
       >
-        <div className="flex w-full items-center justify-center gap-1">
+        <div className="flex w-full items-center justify-center" style={{ gap }}>
           {images.map((image, index) => (
             <motion.div
               key={index}
-              className="relative cursor-pointer overflow-hidden rounded-3xl"
+              ref={(node) => {
+                panels.current[index] = node;
+              }}
+              className="relative shrink-0 cursor-pointer overflow-hidden rounded-3xl"
               initial={{ width: collapsedWidth, height: panelHeight }}
               animate={{
                 width: activeImage === index ? expandedWidth : collapsedWidth,
@@ -136,7 +154,7 @@ const HoverExpand_001 = ({
                   </motion.div>
                 )}
               </AnimatePresence>
-              {image.href ? (
+              {image.href && activeImage === index ? (
                 <PageLink
                   to={image.href}
                   className="block size-full"

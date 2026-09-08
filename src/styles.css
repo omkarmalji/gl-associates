@@ -933,27 +933,26 @@ html[data-surface="light"] .scene-counter {
 }
 
 .project-browser {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  grid-auto-rows: minmax(0, 1fr);
+  display: flex;
+  align-items: center;
   flex: 1 1 0;
-  gap: 5px;
   min-height: 0;
-  max-height: min(54vh, 520px);
-}
-
-.project-browser[data-mode="stack"] {
-  display: block;
-  grid-template-columns: none;
-  max-height: none;
-}
-
-.project-browser[data-mode="row"] {
-  display: block;
-  grid-template-columns: none;
-  /* the row keeps the shipped panel height, so centre the slack it leaves */
+  /* the strip keeps its panel height, so centre the slack it leaves */
   margin-block: auto;
   max-height: min(58vh, 430px);
+}
+
+/* a set wider than the frame scrolls rather than thinning every panel */
+.project-browser[data-overflows="true"] {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  /* the browser owns horizontal panning so vertical swipes still drive the deck */
+  touch-action: pan-x;
+  scrollbar-width: none;
+}
+
+.project-browser[data-overflows="true"]::-webkit-scrollbar {
+  display: none;
 }
 
 .project-browser__row {
@@ -961,64 +960,9 @@ html[data-surface="light"] .scene-counter {
   padding: 0;
 }
 
-.project-browser[data-count="1"] { grid-template-columns: minmax(0, 1fr); }
-.project-browser[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.project-browser[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.project-browser[data-count="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.project-browser[data-count="5"] { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-.project-browser[data-mode="grid"][data-count="11"] a:last-child { grid-column: span 2; }
-
-.project-browser[data-mode="grid"] a {
-  position: relative;
-  overflow: hidden;
-  min-width: 0;
-  color: var(--off-white);
-  background: var(--paper-deep);
-}
-
-.project-browser[data-mode="grid"] a::after {
-  content: "";
-  position: absolute;
-  inset: 35% 0 0;
-  background: linear-gradient(0deg, rgba(12, 13, 11, 0.82), transparent);
-  pointer-events: none;
-}
-
-.project-browser[data-mode="grid"] img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(0.72) brightness(0.86);
-  transition: transform 550ms var(--ease), filter 550ms ease;
-}
-
-.project-browser[data-mode="grid"] a:hover img,
-.project-browser[data-mode="grid"] a:focus-visible img {
-  filter: saturate(0.95) brightness(1);
-  transform: scale(1.055);
-}
-
-.project-browser[data-mode="grid"] a > span {
-  position: absolute;
-  z-index: 2;
-  right: 12px;
-  bottom: 11px;
-  left: 12px;
-  display: grid;
-  gap: 2px;
-}
-
-.project-browser[data-mode="grid"] strong {
-  overflow: hidden;
-  font-size: 12px;
-  font-weight: 520;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.project-browser[data-mode="grid"] small {
-  font-size: 8px;
-  opacity: 0.66;
+.project-browser[data-overflows="true"] .project-browser__row > div > div {
+  width: max-content;
+  justify-content: flex-start;
 }
 
 .project-index-visual {
@@ -2375,36 +2319,6 @@ html[data-surface="light"] .scene-counter {
     font-size: 8px;
   }
 
-  .project-browser,
-  .project-browser[data-count="2"],
-  .project-browser[data-count="3"],
-  .project-browser[data-count="4"],
-  .project-browser[data-count="5"] {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-auto-rows: minmax(0, 1fr);
-    gap: 3px;
-    min-height: 0;
-    max-height: none;
-  }
-
-  .project-browser[data-count="1"] {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .project-browser[data-mode="grid"] a > span {
-    right: 7px;
-    bottom: 6px;
-    left: 7px;
-  }
-
-  .project-browser[data-mode="grid"] strong {
-    font-size: 9px;
-  }
-
-  .project-browser[data-mode="grid"] small {
-    font-size: 7px;
-  }
-
   .project-index-visual__media,
   .project-index-visual--1 .project-index-visual__media {
     inset: 0;
@@ -2933,15 +2847,6 @@ html[data-surface="light"] .scene-counter {
 
   .project-filters {
     margin-top: 8px;
-  }
-
-  .project-browser,
-  .project-browser[data-count="2"],
-  .project-browser[data-count="3"],
-  .project-browser[data-count="4"],
-  .project-browser[data-count="5"] {
-    min-height: 0;
-    max-height: none;
   }
 
   .project-index-visual__slab,

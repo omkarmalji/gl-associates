@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { useSearchParams } from "react-router-dom";
 import { HoverExpand_001 } from "../components/ui/skiper-ui/skiper52";
-import { HoverExpand_002 } from "../components/ui/skiper-ui/skiper53";
 import { PageLink as Link } from "../components/PageLink";
 import { ResponsiveImage } from "../components/ResponsiveImage";
 import { SceneDeck, type Scene } from "../components/SceneDeck";
@@ -43,63 +42,59 @@ export function ProjectsPage({ filter }: { filter?: "Architecture" | "Interior" 
   return <SceneDeck key={activeFilter} scenes={scenes} ariaLabel="Project index" />;
 }
 
-type BrowserLayout =
-  | { mode: "row"; collapsed: string; expanded: string; height: string }
-  | { mode: "stack"; collapsed: string; expanded: string; width: string }
-  | { mode: "grid" };
-
 const GAP = 4;
 
+type Filmstrip = {
+  collapsed: string;
+  expanded: string;
+  height: string;
+  gap: string;
+  overflows: boolean;
+  scrollsWithWheel: boolean;
+  followActive: boolean;
+};
+
 /**
- * The horizontal row needs a pointer and room for an open panel beside the
- * collapsed ones; elsewhere the panels stack and expand downward. Either way the
- * panels are measured against the container so the set always fits one screen.
- * If it cannot, the plain grid takes over.
+ * Panels keep a constant size whatever the project count: dividing the frame
+ * between them made a collapsed panel wider than an open one as soon as a filter
+ * left only two or three, and crowded them to slivers on "All". When the set is
+ * wider than the frame the strip scrolls instead of shrinking, so adding
+ * projects lengthens the strip rather than thinning every panel.
  */
-function useBrowserLayout(container: React.RefObject<HTMLDivElement | null>, count: number) {
-  const [layout, setLayout] = useState<BrowserLayout>({ mode: "grid" });
+function useFilmstrip(container: React.RefObject<HTMLDivElement | null>, count: number) {
+  const [strip, setStrip] = useState<Filmstrip | null>(null);
 
   useEffect(() => {
     const element = container.current;
     if (!element) return;
 
     const measure = () => {
-      if (count < 2) {
-        setLayout({ mode: "grid" });
-        return;
-      }
       const { clientWidth: width, clientHeight: height } = element;
-      const gaps = (count - 1) * GAP;
+      if (!width || !height) return;
       const fine = window.matchMedia("(min-width: 900px) and (hover: hover) and (pointer: fine)").matches;
 
-      if (fine) {
-        // the shipped panel is 24rem; give it that when there is room, else 42% of the row
-        const expanded = Math.min(384, Math.max(240, width * 0.42));
-        const collapsed = (width - expanded - gaps) / (count - 1);
-        if (collapsed >= 26) {
-          setLayout({
-            mode: "row",
-            collapsed: `${collapsed}px`,
-            expanded: `${expanded}px`,
-            height: `${Math.min(430, Math.max(240, height))}px`,
-          });
-          return;
-        }
-      }
+      const collapsed = fine ? 92 : 68;
+      const rest = collapsed * (count - 1) + GAP * (count - 1);
+      const preferred = fine ? 384 : Math.min(300, Math.max(210, width * 0.74));
+      const floor = fine ? 280 : 190;
 
-      const expanded = Math.min(300, Math.max(190, height * 0.44));
-      const collapsed = (height - expanded - gaps) / (count - 1);
-      if (collapsed >= 18) {
-        setLayout({
-          mode: "stack",
-          collapsed: `${collapsed}px`,
-          expanded: `${expanded}px`,
-          width: `${width}px`,
-        });
-        return;
-      }
+      // a set that very nearly fits gives the open panel back a little width so it
+      // sits inside the frame; one that cannot fit keeps its size and scrolls
+      const room = width - rest;
+      const expanded = preferred + rest > width && room >= floor ? room : preferred;
+      const overflows = expanded + rest > width;
 
-      setLayout({ mode: "grid" });
+      setStrip({
+        collapsed: `${collapsed}px`,
+        expanded: `${Math.floor(expanded)}px`,
+        height: `${Math.min(fine ? 430 : 470, Math.max(220, height))}px`,
+        gap: `${GAP}px`,
+        overflows,
+        // a pointer scrolls the strip with the wheel; touch keeps vertical swipes
+        // for the deck and reaches panels by tapping them into view
+        scrollsWithWheel: overflows && fine,
+        followActive: !fine,
+      });
     };
 
     measure();
@@ -108,7 +103,7 @@ function useBrowserLayout(container: React.RefObject<HTMLDivElement | null>, cou
     return () => observer.disconnect();
   }, [container, count]);
 
-  return layout;
+  return strip;
 }
 
 function ProjectsOpening({
@@ -121,7 +116,7 @@ function ProjectsOpening({
   visibleProjects: Project[];
 }) {
   const browser = useRef<HTMLDivElement>(null);
-  const layout = useBrowserLayout(browser, visibleProjects.length);
+  const strip = useFilmstrip(browser, visibleProjects.length);
   const panels = visibleProjects.map((project) => ({
     src: project.images[0].src,
     alt: project.images[0].alt,
@@ -143,32 +138,24 @@ function ProjectsOpening({
           </button>
         ))}
       </div>
-      <div className="project-browser" data-count={visibleProjects.length} data-mode={layout.mode} ref={browser}>
-        {layout.mode === "row" && (
+      <div
+        className="project-browser"
+        data-count={visibleProjects.length}
+        data-overflows={strip?.overflows ? "true" : "false"}
+        data-deck-ignore={strip?.scrollsWithWheel ? "" : undefined}
+        ref={browser}
+      >
+        {strip && (
           <HoverExpand_001
             className="project-browser__row"
-            collapsedWidth={layout.collapsed}
-            expandedWidth={layout.expanded}
-            panelHeight={layout.height}
+            collapsedWidth={strip.collapsed}
+            expandedWidth={strip.expanded}
+            panelHeight={strip.height}
+            gap={strip.gap}
+            followActive={strip.followActive}
             images={panels}
           />
         )}
-        {layout.mode === "stack" && (
-          <HoverExpand_002
-            className="project-browser__row"
-            collapsedHeight={layout.collapsed}
-            expandedHeight={layout.expanded}
-            panelWidth={layout.width}
-            gap={`${GAP}px`}
-            images={panels}
-          />
-        )}
-        {layout.mode === "grid" && visibleProjects.map((project) => (
-          <Link to={`/projects/${project.slug}`} key={project.slug} aria-label={`View ${project.title}`}>
-            <ResponsiveImage image={project.images[0]} />
-            <span><strong>{project.shortTitle}</strong><small>{project.category}</small></span>
-          </Link>
-        ))}
       </div>
     </article>
   );

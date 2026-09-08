@@ -79,12 +79,22 @@ const collect = () => {
     }
   }
 
+  // content inside a scroll container is meant to extend past the frame
+  const scrolls = (el) => {
+    for (let node = el.parentElement; node; node = node.parentElement) {
+      const { overflowX, overflowY } = getComputedStyle(node);
+      if (/(auto|scroll)/.test(overflowX) || /(auto|scroll)/.test(overflowY)) return true;
+    }
+    return false;
+  };
+
   const overlaps = [];
   for (let i = 0; i < candidates.length; i += 1) {
     for (let j = i + 1; j < candidates.length; j += 1) {
       const a = candidates[i];
       const b = candidates[j];
       if (a.el.contains(b.el) || b.el.contains(a.el)) continue;
+      if (scrolls(a.el) || scrolls(b.el)) continue;
       // full-bleed imagery sits behind content by design: only compare image-to-image
       if (a.isImage !== b.isImage) continue;
       if (!a.interactive && !b.interactive && !a.isImage) continue;
@@ -102,6 +112,7 @@ const collect = () => {
   }
 
   const offscreen = candidates
+    .filter((c) => !scrolls(c.el))
     .filter((c) => c.rect.x < -2 || c.rect.right > window.innerWidth + 2 || c.rect.bottom > window.innerHeight + 2 || c.rect.y < -2)
     .map((c) => ({ tag: c.tag, className: c.className, text: c.text, rect: c.rect }));
 
