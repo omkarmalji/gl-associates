@@ -67,7 +67,6 @@ function ProjectPair({ project, first, second }: { project: Project; first: numb
     <article className="project-pair">
       <div className="project-pair__one"><ResponsiveImage image={project.images[first]} /></div>
       <div className="project-pair__two"><ResponsiveImage image={project.images[second]} /></div>
-      <p>{project.shortTitle}</p>
     </article>
   );
 }

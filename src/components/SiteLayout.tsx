@@ -52,7 +52,7 @@ export function SiteLayout() {
       <header className="site-nav" ref={nav} onPointerMove={trackGlass} onPointerLeave={releaseGlass}>
         <Link className="brand" to="/" aria-label="Gayatri Lokesh Architects home">
           <img src="images/gl-associates-logo-transparent.png" alt="" />
-          <span>Gayatri Lokesh<br />Architects LLP</span>
+          <span>Gayatri Lokesh Architects LLP</span>
         </Link>
 
         <div className="site-nav__actions">
@@ -79,7 +79,7 @@ export function SiteLayout() {
         <div className="site-menu__top">
           <Link className="brand brand--menu" to="/" aria-label="Gayatri Lokesh Architects home">
             <img src="images/gl-associates-logo-transparent.png" alt="" />
-            <span>Gayatri Lokesh<br />Architects LLP</span>
+            <span>Gayatri Lokesh Architects LLP</span>
           </Link>
           <button type="button" onClick={() => setMenuOpen(false)} aria-label="Close menu"><X size={25} weight="light" /></button>
         </div>

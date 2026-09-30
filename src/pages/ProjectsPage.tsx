@@ -128,7 +128,7 @@ function ProjectsOpening({
   return (
     <article className="projects-opening">
       <div className="projects-opening__header">
-        <h1>Work</h1>
+        <h1>Gayatri Lokesh Architects <span>/ Work</span></h1>
         <p>Architecture shaped by true stories, working landscapes and lived experience.</p>
       </div>
       <div className="project-filters" data-deck-ignore>
@@ -157,17 +157,16 @@ function ProjectsOpening({
           />
         )}
       </div>
+      <p className="project-browser__hint">Explore {visibleProjects.length} projects <span>· Swipe or scroll sideways</span></p>
     </article>
   );
 }
 function ProjectIndexVisual({ project, index }: { project: Project; index: number }) {
-  const secondary = project.images[Math.min(2, project.images.length - 1)];
   return (
     <article className={`project-index-visual project-index-visual--${index % 3}`}>
       <div className="project-index-visual__media">
         <ResponsiveImage image={project.images[0]} eager={index === 0} />
       </div>
-      <div className="project-index-visual__secondary"><ResponsiveImage image={secondary} /></div>
       <div className={`project-index-visual__slab project-index-visual__slab--${project.ink}`} style={{ background: project.accent }}>
         <span>{project.category}</span>
         <h1>{project.shortTitle}</h1>
