@@ -544,8 +544,7 @@ html[data-surface="light"] .scene-counter {
   transform: translateX(-50%);
 }
 
-.project-hero__meta span,
-.project-hero__summary span {
+.project-hero__meta span {
   display: block;
   margin-bottom: 7px;
   font-size: 9px;
@@ -2945,26 +2944,11 @@ html[data-surface="light"] .scene-counter {
 
 .desktop-nav { font-size: 11px; }
 
-.project-hero__identity {
-  position: absolute;
-  z-index: 4;
-  top: clamp(105px, 15vh, 180px);
-  left: var(--edge);
-  max-width: 68vw;
-  margin: 0;
-  font-size: clamp(38px, 5.7vw, 100px);
-  font-weight: 440;
-  line-height: .94;
-  letter-spacing: -.065em;
-  text-shadow: 0 2px 34px rgba(0, 0, 0, .7);
-}
-
-.project-hero__identity span { display: block; }
 .project-hero h1 { top: 55%; font-size: clamp(50px, 6.2vw, 108px); }
 .project-hero--1 h1 { top: 42%; }
 .project-hero--2 h1 { top: auto; }
 .project-hero__meta, .project-hero__summary { font-size: 13px; }
-.project-hero__meta span, .project-hero__summary span { font-size: 10px; }
+.project-hero__meta span { font-size: 10px; }
 
 .project-intro__back, .project-intro__data, .project-intro__data dl,
 .project-index-visual__slab > span, .project-index-visual__slab dl { font-size: 14px; }
@@ -3038,7 +3022,6 @@ html[data-surface="light"] .scene-counter {
 
 @media (max-width: 900px) {
   .brand span { font-size: clamp(8px, 2.35vw, 12px); letter-spacing: -.035em; }
-  .project-hero__identity { top: 19%; left: 16px; max-width: 88vw; font-size: clamp(35px, 9vw, 62px); }
   .project-hero h1, .project-hero--1 h1, .project-hero--2 h1 { top: auto; bottom: 24%; font-size: clamp(43px, 11vw, 76px); }
   .project-hero__meta { font-size: 12px; }
   .project-intro__data, .project-intro__data dl, .project-index-visual__slab dl { font-size: 11px; }

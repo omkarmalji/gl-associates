@@ -52,14 +52,12 @@ function ProjectHero({ project, eager = false, variant = 0 }: { project: Project
     <article className={`project-hero project-hero--${variant} ${project.slug === "brick-abode" ? "project-hero--high-key" : ""}`}>
       <ResponsiveImage image={project.images[0]} eager={eager} />
       <div className="project-hero__veil" />
-      {eager && <p className="project-hero__identity">Gayatri Lokesh <span>Architects LLP</span></p>}
       <h1><span>{project.shortTitle}</span></h1>
       <div className="project-hero__meta">
         <span>Project</span>
         <p>{project.location}<br />{project.status}</p>
       </div>
       <div className="project-hero__summary">
-        <span>Intent</span>
         <p>{project.summary}</p>
       </div>
       <Link className="project-hero__link" to={`/projects/${project.slug}`} aria-label={`View ${project.title}`}>
